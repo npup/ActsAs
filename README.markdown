@@ -52,11 +52,11 @@ Check for conformance with this signature by calling Acts.As(signature, obj):
     // Middle-aged and insane object named Ljörgen has lambada chops
     foo({name:"Ljörgen", age: 47, insane: true, lambada: function () {console.log(this.name+": Naaa na-na-na-naaa... (ducky)");}});
     // A card carrying Lambdaist obj has lambada chops..
-	var lambadator = new Lambadaist("Kalenderhielm", 56, true);
-    foo(lambadator);  // ok
+	var lambadaist = new Lambadaist("Kalenderhielm", 56, true);
+    foo(lambadaist);  // ok
 	// .. after being on medication for a while, no longer applicable for foo()
-	lambadator.insane = false;
-	foo(lambadator); // throws
+	lambadaist.insane = false;
+	foo(lambadaist); // throws
 
     
 
@@ -124,7 +124,6 @@ We also see how one could go about validating function parameters in general:
 	  this.name = name;
 	}
 	Ape.prototype.grunt = function (what) {return this.name+ " grunts: '"+what+"'";};
-	
 
 	logGrunt(new Ape("Ljörgen"), "fool.."); // ok
 	logGrunt("Ljörgen", "fool.."); // throws
