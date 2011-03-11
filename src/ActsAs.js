@@ -24,6 +24,7 @@ var INFO, none, BLANK = /^\s*$/, _opts = Object.prototype.toString, API = {}
 function instanceCheck(propValue, obj, prop, type) {return propValue instanceof type;}
 function fn(f) {var re = /function (.+)\(/, m = re.exec(f.toString()); return m ? m[1] : "[anonymous function]";}
 function checkSignature(signature, obj) {
+  if (!(obj instanceof Object)) {throw Error("Obj to check was not a real object ("+obj+")");}
   var prop, wantedCheck, check, actualValue, actualType, actualString;
   INFO = null;
   for (prop in signature) {
