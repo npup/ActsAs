@@ -21,16 +21,16 @@ var INFO, none, BLANK = /^\s*$/, _opts = Object.prototype.toString, API = {}
   , "date-future":      function (v) {return checks["type-date"](v) && (+(new Date)<+v);}
   , "date-past":        function (v) {return checks["type-date"](v) && (+(new Date)>+v);}
 };
-function instanceCheck(propValue, obj, prop, type) {return propValue instanceof type;}
+function instanceCheck(o, ctor) {return o instanceof ctor;}
 function fn(f) {var re = /function (.+)\(/, m = re.exec(f.toString()); return m ? m[1] : "[anonymous function]";}
 function checkSignature(signature, obj) {
-  if (!(obj instanceof Object)) {throw Error("Obj to check was not a real object ("+obj+")");}
+  if (!instanceCheck(obj, Object)) {throw Error("Obj to check was not a real object ("+obj+")");}
   var prop, wantedCheck, check, actualValue, actualType, actualString;
   INFO = null;
   for (prop in signature) {
     wantedCheck = signature[prop];
     check = (typeof wantedCheck=="function") ? instanceCheck : checks[wantedCheck];
-    if (!check || check(actualValue = obj[prop], obj, prop, wantedCheck)===true) {continue;} // prop ok, go on
+    if (!check || check(actualValue = obj[prop], wantedCheck, obj, prop)===true) {continue;} // prop ok, go on
     if (actualValue===none || actualValue===null) {actualString = ""+actualValue;}
     else {
       actualType = {"[object RegExp]": "regexp", "[object Array]": "array", "[object Date]": "date (ts:"+(+actualValue)+")"}[_opts.call(actualValue)] || typeof actualValue;
