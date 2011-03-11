@@ -183,4 +183,24 @@ test("instance of Mud", function () {
 });
 
 
+module("Error message check");
+/*****************************************************
+* Error message check
+******************************************************/
+test("Work with real objects, bail on non objects", function () {
+  function attempt(what) {try {Acts.As({}, what);}catch(err) {return err;} return true;}
+  function nonObj(what) {ok(attempt(what) instanceof Error, "Bail when checking non-object: "+what+" ("+typeof what+")");}
+  function realObj(what) {ok(attempt(what)===true, "Do work when checking real object: "+what+" ("+typeof what+")");}
+  nonObj();
+  nonObj(null);
+  nonObj(true);
+  nonObj(false);
+  nonObj(5);
+  nonObj(String(5));
+  nonObj("ape");
+  nonObj(String("ape"));
+  realObj(new String("ape"));
+  realObj(new Date());
+});
+
 })();
