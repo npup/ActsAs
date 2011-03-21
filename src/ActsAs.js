@@ -1,19 +1,19 @@
 /*
 * API:
 *
-*   Acts.As(signature, obj) 	- signature: Object
-*															- obj: Object
-*			returns boolean, true if obj is in conformance with signature, false otherwise
+*   Acts.As(signature, obj)   - signature: Object
+*                             - obj: Object
+*     returns boolean, true if obj is in conformance with signature, false otherwise
 *
-*		Acts.As.info()
-*			returns string, status message of latest check ("Ok" if true)
+*   Acts.As.info()
+*     returns string, status message of latest check ("Ok" if true)
 *
-*	A signature is an object that declares the characteristics of properties
+* A signature is an object that declares the characteristics of properties
 * another object can mimic. Example:
 *
-*	Acts.As({name: "non-blank-string", smirk: "type-function"}, obj); // true or false, depending on obj
+* Acts.As({name: "non-blank-string", smirk: "type-function"}, obj); // true or false, depending on obj
 * Acts.As(); // "Ok" (or a useful error message on first point of failure), depending on obj
-*		
+*   
 */
 var Acts = (function () {
 var INFO, none, BLANK = /^\s*$/, _opts = Object.prototype.toString, API = {}
