@@ -83,6 +83,66 @@ function run(conf) {
 return {run: run};
 })();
 
+
+
+module("API tests");
+/*****************************************************
+* "Real world"-like tests
+******************************************************/
+function MoodyWorker(grumpy, occupation) {
+	this.grumpy = !!grumpy;
+	this.occupation = occupation;
+}
+MoodyWorker.prototype.fire = function () {delete this.occupation;};
+MoodyWorker.prototype.noogie = function () {this.grumpy = true;};
+test("Static checks", function () {
+	var grumpyUnemployed = {grumpy: "value-true", occupation: "value-undefined"}
+	  , emptyObject = {}
+	  , grumpyShoeShineBoy = new MoodyWorker(true, "shoe shine boy")
+	  , happyUnemployed = new MoodyWorker(false);
+	
+	ok(!Acts.As(grumpyUnemployed, emptyObject), "Empty object is NOT a grumpy unemployed");
+	equals(Acts.As.info(), "prop 'grumpy' was not value-true, but: undefined", "Correct mismatch msg for empty object vs 'grumpy unemployed'");
+	ok(!Acts.As(grumpyUnemployed, grumpyShoeShineBoy), "Grumpy shoe shine boy is NOT a grumpy unemployed");
+	equals(Acts.As.info(), "prop 'occupation' was not value-undefined, but: string (shoe shine boy)", "Correct mismatch msg for grumpy show shine boy vs 'grumpy unemployed'");
+	ok(!Acts.As(grumpyUnemployed, happyUnemployed), "Happy unemployed is NOT a grumpy unemployed");
+	equals(Acts.As.info(), "prop 'grumpy' was not value-true, but: boolean (false)", "Correct mismatch msg for happy unemployed vs 'grumpy unemployed'");
+
+	emptyObject.grumpy = true; // grumpify pojo
+	grumpyShoeShineBoy.fire(); // sack him
+	happyUnemployed.noogie();  // piss him off
+	ok(Acts.As(grumpyUnemployed, emptyObject), "Modified empty object into a grumpy unemployed - works!");
+	equals(Acts.As.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+	ok(Acts.As(grumpyUnemployed, grumpyShoeShineBoy), "Former grumpy shoe shine boy is suddenly a grumpy unemployed - works!");
+	equals(Acts.As.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+	ok(Acts.As(grumpyUnemployed, happyUnemployed), "Noogied happy unemployed is suddenly a grumpy unemployed - works!");
+	equals(Acts.As.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+
+});
+test("Reusable signature", function () {
+	var testGrumpyUnemployed = Acts.As.BuildTest({grumpy: "value-true", occupation: "value-undefined"})
+	  , emptyObject = {}
+	  , grumpyShoeShineBoy = new MoodyWorker(true, "shoe shine boy")
+	  , happyUnemployed = new MoodyWorker(false);
+	
+	ok(!testGrumpyUnemployed(emptyObject), "Empty object is NOT a grumpy unemployed");
+	equals(testGrumpyUnemployed.info(), "prop 'grumpy' was not value-true, but: undefined", "Correct mismatch msg for empty object vs 'grumpy unemployed'");
+	ok(!testGrumpyUnemployed(grumpyShoeShineBoy), "Grumpy shoe shine boy is NOT a grumpy unemployed");
+	equals(testGrumpyUnemployed.info(), "prop 'occupation' was not value-undefined, but: string (shoe shine boy)", "Correct mismatch msg for grumpy show shine boy vs 'grumpy unemployed'");
+	ok(!testGrumpyUnemployed(happyUnemployed), "Happy unemployed is NOT a grumpy unemployed");
+	equals(testGrumpyUnemployed.info(), "prop 'grumpy' was not value-true, but: boolean (false)", "Correct mismatch msg for happy unemployed vs 'grumpy unemployed'");
+	
+	emptyObject.grumpy = true; // grumpify pojo
+	grumpyShoeShineBoy.fire(); // sack him
+	happyUnemployed.noogie();  // piss him off
+	ok(testGrumpyUnemployed(emptyObject), "Modified empty object into a grumpy unemployed - works!");
+	equals(testGrumpyUnemployed.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+	ok(testGrumpyUnemployed(grumpyShoeShineBoy), "Former grumpy shoe shine boy is suddenly a grumpy unemployed - works!");
+	equals(testGrumpyUnemployed.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+	ok(testGrumpyUnemployed(happyUnemployed), "Noogied happy unemployed is suddenly a grumpy unemployed - works!");
+	equals(testGrumpyUnemployed.info(), "Ok", "Correct 'OK' message for testing a conforming grumpy enemployed");
+});
+
 module("Type");
 /*****************************************************
 * Checks on the various types

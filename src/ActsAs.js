@@ -8,6 +8,17 @@
 *   Acts.As.info()
 *     returns string, status message of latest check ("Ok" if true)
 *
+*   Acts.As.BuildTest(signature)  - signature: Object
+*     returns function, which can be called (and reused) to test an obj for conformance
+*       with the signature
+*     Example:
+*       var waterFreeze = Acts.As.BuildTest({degreesCelsius: "negative-number"});
+*       if (!waterFreeze(obj)) {throw Error("Not cold enough: "+waterFreeze.info());}
+*       else {console.log("Brr! %s degrees", obj.degreesCelsius);}
+*     The info message after testing is available on the testing function
+*     as waterFreeze.info(), as well as through the "static" Acts.As.info()
+*
+*
 * A signature is an object that declares the characteristics of properties
 * another object can mimic. Example:
 *
@@ -61,5 +72,14 @@ function checkSignature(signature, obj) {
 }
 API.As = checkSignature;
 API.As.info = function () {return INFO;};
+API.As.BuildTest = function (obj) {
+  var signature = {}, f = function (obj) {
+    var result = checkSignature(signature, obj);
+    f.info = function () {return INFO;};
+    return result;
+  };
+  for (var p in obj) {signature[p] = obj[p];}
+  return f;
+};
 return API;
 })();

@@ -52,11 +52,11 @@ Check for conformance with this signature by calling Acts.As(signature, obj):
     // Middle-aged and insane object named Ljörgen has lambada chops
     foo({name:"Ljörgen", age: 47, insane: true, lambada: function () {console.log(this.name+": Naaa na-na-na-naaa... (ducky)");}});
     // A card carrying Lambdaist obj has lambada chops..
-	var lambadaist = new Lambadaist("Kalenderhielm", 56, true);
+    var lambadaist = new Lambadaist("Kalenderhielm", 56, true);
     foo(lambadaist);  // ok
-	// .. after being on medication for a while, no longer applicable for foo()
-	lambadaist.insane = false;
-	foo(lambadaist); // throws
+    // .. after being on medication for a while, no longer applicable for foo()
+    lambadaist.insane = false;
+    foo(lambadaist); // throws
 
     
 
@@ -73,60 +73,81 @@ Here's how to use conformance failure info for debugging or whatever:
     // will throw with msg "prop 'insane' was not value-true, but: string (TRUE)"
     bar({name:"Ljörgen", age: 47, insane: "TRUE", lambada: function () {console.log(this.name+": Naaa na-na-na-naaa... (ducky)");}});
 
+One way to resue a signature is of course to store it in a variable or a property. An alternate route is to create a tester function, like this:
+
+    var isInsaneLambadaEnabled = Acts.As.BuildTest({
+      name: "type-string"
+      , age: "type-number"
+      , lambada: "type-function"
+      , insane: "value-true"
+    });
+
+and the usage is like:
+    
+    for (var idx=0, len=arr.length, obj; idx<len; ++idx) {
+      obj = arr[idx];
+      if (!isInsaneLambadaEnabled(obj)) {
+        console.error("obj %s is not fit for insane lambada: %s", idx, isInsaneLambadaEnabled.info());
+        continue;
+      }
+      obj.lambada();
+    }
+
+The mismatch info message is available as a method on the test function as well as via the "static" `Acts.As.info()`.
 
 Characteristics
 ---------------
 
 Out of the box, a signature explicitly supports the following property characteristics:
-	
+    
 *Types*
 
-   	"type-string"
+    "type-string"
     "type-number"
     "type-function"
     "type-regexp"
     "type-array"
-	"type-date"
-	"type-boolean"      // any boolean will do
+    "type-date"
+    "type-boolean"      // any boolean will do
 
 *Values*
 
-	"value-true"        // property must be === true
+    "value-true"        // property must be === true
     "value-false"       // property must be === false
     "value-null"        // property must be === null
     "value-undefined"   // property must not be defined
 
 *Constrained values*
 
-	"positive-number"
+    "positive-number"
     "negative-number"
-	"integer"
-	"positive-integer"
-	"negative-integer"
-	"non-blank-string"
-	
+    "integer"
+    "positive-integer"
+    "negative-integer"
+    "non-blank-string"
+    
 *Constructors*
 
-	Foo		// property must be instanceof Foo
-	
+    Foo     // property must be instanceof Foo
+    
 The constructor validating thing is demonstrated in the `logGrunt.signature` below.
 We also see how one could go about validating function parameters in general:
-	
-	function logGrunt(ape, what) {
-	  if (!Acts.As(logGrunt.signature, {"gruntee": ape, "what": what})) {throw Error(Acts.As.info());}
-	  console.log(ape.grunt(what));
-	}
-	logGrunt.signature = {
-	  "gruntee": Ape
-	  , "what": "non-blank-string"
-	};
-	function Ape(name) {
-	  this.name = name;
-	}
-	Ape.prototype.grunt = function (what) {return this.name+ " grunts: '"+what+"'";};
+    
+    function logGrunt(ape, what) {
+      if (!Acts.As(logGrunt.signature, {"gruntee": ape, "what": what})) {throw Error(Acts.As.info());}
+      console.log(ape.grunt(what));
+    }
+    logGrunt.signature = {
+      "gruntee": Ape
+      , "what": "non-blank-string"
+    };
+    function Ape(name) {
+      this.name = name;
+    }
+    Ape.prototype.grunt = function (what) {return this.name+ " grunts: '"+what+"'";};
 
-	logGrunt(new Ape("Ljörgen"), "fool.."); // ok
-	logGrunt("Ljörgen", "fool.."); // throws
+    logGrunt(new Ape("Ljörgen"), "fool.."); // ok
+    logGrunt("Ljörgen", "fool.."); // throws
 
 
 
