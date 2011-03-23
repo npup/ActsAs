@@ -1,4 +1,6 @@
 /*
+* Acts.As v0.2
+*
 * API:
 *
 *   Acts.As(signature, obj)   - signature: Object
@@ -27,7 +29,7 @@
 *   
 */
 var Acts = (function () {
-var INFO, none, BLANK = /^\s*$/, _opts = Object.prototype.toString, API = {}
+var INFO, none, BLANK = /^\s*$/, _opts = Object.prototype.toString, API = {}, VERSION = "0.2"
 , checks = {
   "type-string":        function (v) {return _opts.call(v)==="[object String]";}
   , "type-number":      function (v) {return _opts.call(v)==="[object Number]";}
@@ -71,6 +73,7 @@ function checkSignature(signature, obj) {
   return !!(INFO = "Ok"); // true
 }
 API.As = checkSignature;
+API.As.version = VERSION;
 API.As.info = function () {return INFO;};
 API.As.BuildTest = function (obj) {
   var signature = {}, f = function (obj) {
